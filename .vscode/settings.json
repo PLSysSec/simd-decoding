@@ -1,0 +1,12 @@
+{
+    "files.associations": {
+        "__config": "c",
+        "cstdio": "c",
+        "*.prebuilt": "c",
+        "immintrin.h": "c",
+        "pngpriv.h": "c",
+        "mmintrin.h": "c",
+        "time.h": "c",
+        "timer_t.h": "c"
+    }
+}
