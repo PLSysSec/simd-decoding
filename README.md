@@ -58,7 +58,7 @@ taskset -c 1 bash full_test.sh
 ```shell
 bash build.sh -s -w
 bash wasm_decode.sh -s
-taskset -c 1 bassh full_test.sh -s -w
+taskset -c 1 bash full_test.sh -s -w
 ```
 
 ### WASM Target without SIMD128 Instructions ###
@@ -66,5 +66,5 @@ taskset -c 1 bassh full_test.sh -s -w
 ```shell
 bash build.sh -w
 bash wasm_decode.sh 
-taskset -c 1 bassh full_test.sh -w
+taskset -c 1 bash full_test.sh -w
 ```
