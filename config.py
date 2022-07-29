@@ -3,8 +3,8 @@
 def init():
   # minimum and maximum x-values for output graph
   global MIN, MAX
-  MIN = 0.2
-  MAX = 0.6
+  MIN = 0.0
+  MAX = 0.4
 
   # filenames
   global native_sse_fn, native_no_sse_fn, wasm_simd_fn, wasm_no_simd_fn

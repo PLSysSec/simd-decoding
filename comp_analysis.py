@@ -60,14 +60,15 @@ def generate_plt(data):
   Arguments:
     data = {filename: (average execution time, [raw data])}
   """
-  bins = np.arange(config.MIN, config.MAX, 0.005)
+  bins = np.arange(config.MIN, config.MAX, 0.01)
   plt.hist(data[config.native_no_sse_fn][1], bins, alpha=0.5, label=config.comp_struct[1][0], edgecolor="black")
   plt.hist(data[config.native_sse_fn][1], bins, alpha=0.5, label=config.comp_struct[1][1], edgecolor="black")
   plt.hist(data[config.wasm_no_simd_fn][1], bins, alpha=0.5, label=config.comp_struct[1][2], edgecolor="black")
   plt.hist(data[config.wasm_simd_fn][1], bins, alpha=0.5, label=config.comp_struct[1][3], edgecolor="black")
+  
   plt.xlabel("Time [s]")
   plt.ylabel("Frequency")
-  plt.legend(loc='upper right')
+  plt.legend(loc='upper left', fontsize='small')
   plt.title(config.comp_struct[2])
   plt.savefig(config.comp_struct[3])  
 
