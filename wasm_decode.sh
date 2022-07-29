@@ -20,26 +20,29 @@ do
 				echo "simd enabled...";;
 	esac
 done
+
+SCRIPT=$(readlink -f "$0")
+SCRIPT_PATH=$(dirname "$SCRIPT")
   
 echo "compiling decode.c to WASM..."
 if [[ "$simd" = true ]]; then 
 	CFLAGS="-O3 -fopenmp-simd" \
 	LDFLAGS="-Wl,--export-all -Wl,--growable-table" \
-	/opt/wasi-sdk/wasi-sdk-14.0/bin/clang \
-	--sysroot /opt/wasi-sdk/wasi-sdk-14.0/share/wasi-sysroot \
-	-I/opt/wasi-sdk/wasi-sdk-14.0/share/wasi-sysroot/include/libpng16 \
-	-I/opt/simde-no-tests/wasm \
-	-L/opt/wasi-sdk/wasi-sdk-14.0/share/wasi-sysroot/lib \
-	-o decode_simd.wasm \
+	${WASI_SDK_PATH}/bin/clang \
+	--sysroot ${WASI_SDK_PATH}/share/wasi-sysroot \
+	-I${WASI_SDK_PATH}/share/wasi-sysroot/include/libpng16 \
+	-I${SIMDE_PATH}/wasm \
+	-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
+	-o out/decode_simd.wasm \
 	decode_simd.c \
 	-lpng16 -lz 
 else 
 	LDFLAGS="-Wl,--export-all -Wl,--growable-table" \
-	/opt/wasi-sdk/wasi-sdk-14.0/bin/clang \
-	--sysroot /opt/wasi-sdk/wasi-sdk-14.0/share/wasi-sysroot \
-	-I/opt/wasi-sdk/wasi-sdk-14.0/share/wasi-sysroot/include/libpng16 \
-	-L/opt/wasi-sdk/wasi-sdk-14.0/share/wasi-sysroot/lib \
-	-o decode_no_simd.wasm \
+	${WASI_SDK_PATH}/bin/clang \
+	--sysroot ${WASI_SDK_PATH}/share/wasi-sysroot \
+	-I${WASI_SDK_PATH}/share/wasi-sysroot/include/libpng16 \
+	-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
+	-o out/decode_no_simd.wasm \
 	decode_no_simd.c \
 	-lpng16 -lz 
 fi 
@@ -47,34 +50,34 @@ fi
 # Extraneous step - only for checking WASM code
 echo "converting .wasm to .wat..."
 if [[ "$simd" = true ]]; then
-	/opt/wabt/build/wasm2wat -o decode_simd.wat decode_simd.wasm
+	${WABT_PATH}/build/wasm2wat -o out/decode_simd.wat out/decode_simd.wasm
 else 
-	/opt/wabt/build/wasm2wat -o decode_nosimd.wat decode_no_simd.wasm
+	${WABT_PATH}/build/wasm2wat -o out/decode_nosimd.wat out/decode_no_simd.wasm
 fi
 
 echo "rebuilding WAMR..."
 if [[ "$simd" = true ]]; then 
-	cd /opt/wasm-micro-runtime/wamr-compiler/build 
+	cd ${WAMR_PATH}/wamr-compiler/build 
 	sudo cmake .. -DWAMR_BUILD_SIMD=1
 	sudo make 
-	cd /home/jgoldman/image_decoding
+	cd ${SCRIPT_PATH}
 else 
-	cd /opt/wasm-micro-runtime/wamr-compiler/build 
+	cd ${WAMR_PATH}/wamr-compiler/build 
 	sudo cmake .. -DWAMR_BUILD_SIMD=0
 	sudo make 
-	cd /home/jgoldman/image_decoding
+	cd ${SCRIPT_PATH}
 fi
 
 echo "compiling to AOT with wamrc..."
 if [[ "$simd" = true ]]; then 
-	/opt/wasm-micro-runtime/wamr-compiler/build/wamrc \
-	-o decode_simd.aot \
-	decode_simd.wasm
+	${WAMR_PATH}/wamr-compiler/build/wamrc \
+	-o out/decode_simd.aot \
+	out/decode_simd.wasm
 else 
-	/opt/wasm-micro-runtime/wamr-compiler/build/wamrc \
+	${WAMR_PATH}/wamr-compiler/build/wamrc \
 	--disable-simd \
-	-o decode_nosimd.aot \
-	decode_no_simd.wasm
+	-o out/decode_nosimd.aot \
+	out/decode_no_simd.wasm
 fi 
 
 echo "done"
