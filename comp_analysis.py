@@ -17,6 +17,14 @@ def get_improvement(hi, lo, performance):
     sys.exit()
   return 100 * (hi - lo) / (lo if performance else hi)
 
+def generate_data():
+  data = {}
+  config.init()
+  for filename in config.file_struct.keys():
+    raw_data = np.genfromtxt(filename,delimiter=',')
+    data[filename] = (np.mean(raw_data), raw_data)
+  return data
+
 
 def generate_txt(data):
   """
@@ -73,14 +81,32 @@ def generate_plt(data):
   plt.savefig(config.comp_struct[3])  
 
 
+def generate_bar(data):
+  """
+  Generate output bar chart .png file
+  Arguments:
+    data = {filename: (average execution time, [raw data])}
+  """
+  x_axis = config.comp_struct[5]
+  y_axis = np.zeros(4)
+  for i in range(4):
+    y_axis[i + 1 if i % 2 == 0 else i - 1] = list(data.values())[i][0]
+  print(x_axis)
+  print(y_axis)
+  plt.figure(figsize=(6,6))
+  plt.bar(x_axis, y_axis)
+  plt.xlabel('Implementation')
+  plt.ylabel('Time [s]')
+  plt.title(config.comp_struct[2])
+  plt.savefig(config.comp_struct[4])
+    
+
 def main():
-  data = {}
-  config.init()
-  for filename in config.file_struct.keys():
-    raw_data = np.genfromtxt(filename,delimiter=',')
-    data[filename] = (np.mean(raw_data), raw_data)
+  data = generate_data()
   generate_txt(data)
   generate_plt(data)
+  plt.close()
+  generate_bar(data)
 
 
 if __name__ == "__main__":
