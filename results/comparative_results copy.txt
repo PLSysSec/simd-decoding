@@ -1,0 +1,18 @@
+averages [s]: 
+  native without sse2  : 0.207
+  native with sse2     : 0.177
+  wasm without simd128 : 0.357
+  wasm with simd128    : 0.223
+
+performance increase percentage: 
+  native without sse2 -> native with sse2     : 17.29
+  wasm without simd128 -> wasm with simd128   : 59.71
+  wasm with simd128 -> native with sse2       : 26.30
+  wasm without simd128 -> native without sse2 : 71.99
+
+time reduction percentage: 
+  native without sse2 -> native with sse2     : 14.74
+  wasm without simd128 -> wasm with simd128   : 37.38
+  wasm with simd128 -> native with sse2       : 20.82
+  wasm without simd128 -> native without sse2 : 41.85
+
