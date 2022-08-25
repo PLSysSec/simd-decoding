@@ -30,57 +30,59 @@ SCRIPT=$(readlink -f "$0")
 SCRIPT_PATH=$(dirname "$SCRIPT")
 
 N=250
+IMAGE=large.png
 
 if [[ "$simd" = true && "$wasm" = true ]]; then # SIMD instructions and WASM target
-  cp /dev/null wasm_with_simd.csv
-	
-  for i in {0..$N}
+	cp /dev/null results/wasm_with_simd.csv
+		
+	for i in $(seq 1 $N)
 	do
 		${WAMR_PATH}/product-mini/platforms/linux/build/iwasm \
 		--dir=${SCRIPT_PATH} out/decode_simd.aot \
-		${SCRIPT_PATH}/large.png \
-		${SCRIPT_PATH}/wasm_with_simd.csv 
+		${SCRIPT_PATH}/images/${IMAGE} \
+		${SCRIPT_PATH}/results/wasm_with_simd.csv 
 	done
 
-	python3 stat_analysis.py wasm_with_simd.csv
+	python3 stat_analysis.py results/wasm_with_simd.csv
 
 elif [[ "$simd" = true ]]; then # SSE and native target
-  cp /dev/null native_with_sse.csv
+	cp /dev/null results/native_with_sse.csv
 
-  gcc -I/usr/local/include/libpng16 -I${SIMDE_PATH}/wasm \
-  -L/usr/local/lib -o out/decode decode_simd.c -lpng16
+	gcc -I/usr/local/include/libpng16 -I${SIMDE_PATH}/wasm \
+	-L/usr/local/lib -o out/decode decode.c -lpng16
 
-  for i in {0..$N}
-  do
-    out/decode large.png native_with_sse.csv
-  done
+	for i in $(seq 1 $N)
+	do
+		out/decode images/${IMAGE} results/native_with_sse.csv
+	done
 
-  python3 stat_analysis.py native_with_sse.csv
+	python3 stat_analysis.py results/native_with_sse.csv
 
 elif [[ "$wasm" = true ]]; then # no SIMD and WASM target
-	cp /dev/null wasm_no_simd.csv
+	cp /dev/null results/wasm_no_simd.csv
 
-	for i in {0..$N}
+	for i in $(seq 1 $N)
 	do
 		${WAMR_PATH}/product-mini/platforms/linux/build/iwasm \
 		--dir=${SCRIPT_PATH} out/decode_nosimd.aot \
-		${SCRIPT_PATH}/large.png \
-		${SCRIPT_PATH}/wasm_no_simd.csv
+		${SCRIPT_PATH}/images/${IMAGE} \
+		${SCRIPT_PATH}/results/wasm_no_simd.csv
 	done
 
-	python3 stat_analysis.py wasm_no_simd.csv
+	python3 stat_analysis.py results/wasm_no_simd.csv
 
 else # no SSE and native target
-  cp /dev/null native_no_sse.csv
+	cp /dev/null results/native_no_sse.csv
 
-  gcc -I/usr/local/include/libpng16 \
-  -L/usr/local/lib -o out/decode decode_no_simd.c -lpng16
+	gcc -I/usr/local/include/libpng16 \
+	-L/usr/local/lib -o out/decode decode.c -lpng16
 
-  for i in {0..$N}
-  do
-    out/decode large.png native_no_sse.csv
-  done
-  python3 stat_analysis.py native_no_sse.csv
+	for i in $(seq 1 $N)
+	do
+		out/decode images/${IMAGE} results/native_no_sse.csv
+	done
+	
+	python3 stat_analysis.py results/native_no_sse.csv
 
 fi
 

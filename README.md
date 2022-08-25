@@ -68,3 +68,11 @@ bash build.sh -w
 bash wasm_decode.sh 
 taskset -c 1 bash full_test.sh -w
 ```
+
+## Comparative Analysis ##
+
+Individual statistical analysis is run for each case in the `full_test.sh` script. A comparative analysis among all cases can be run proceeding all individual tests using
+
+```shell
+python3 comp_analysis.py
+```

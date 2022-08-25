@@ -34,7 +34,7 @@ if [[ "$simd" = true ]]; then
 	-I${SIMDE_PATH}/wasm \
 	-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
 	-o out/decode_simd.wasm \
-	decode_simd.c \
+	decode.c \
 	-lpng16 -lz 
 else 
 	LDFLAGS="-Wl,--export-all -Wl,--growable-table" \
@@ -43,7 +43,7 @@ else
 	-I${WASI_SDK_PATH}/share/wasi-sysroot/include/libpng16 \
 	-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
 	-o out/decode_no_simd.wasm \
-	decode_no_simd.c \
+	decode.c \
 	-lpng16 -lz 
 fi 
 
@@ -58,13 +58,13 @@ fi
 echo "rebuilding WAMR..."
 if [[ "$simd" = true ]]; then 
 	cd ${WAMR_PATH}/wamr-compiler/build 
-	sudo cmake .. -DWAMR_BUILD_SIMD=1
-	sudo make 
+	cmake .. -DWAMR_BUILD_SIMD=1
+	make 
 	cd ${SCRIPT_PATH}
 else 
 	cd ${WAMR_PATH}/wamr-compiler/build 
-	sudo cmake .. -DWAMR_BUILD_SIMD=0
-	sudo make 
+	cmake .. -DWAMR_BUILD_SIMD=0
+	make 
 	cd ${SCRIPT_PATH}
 fi
 

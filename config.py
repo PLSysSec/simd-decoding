@@ -44,5 +44,5 @@ def init():
       'Native with\nSSE2',
       'WASM without\nSIMD128',
       'WASM with\nSIMD128'
-    ],
+    ]
   )

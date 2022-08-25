@@ -64,7 +64,7 @@ elif [[ "$simd" = true ]]; then # SSE and native target
 	./configure --enable-intel-sse=yes 
 
 	make
-	sudo make install
+	make install
 elif [[ "$wasm" = true ]]; then # no SIMD and WASM target
 	CFLAGS="-DPNG_NO_SETJMP \
 	 -D_WASI_EMULATED_SIGNAL" \
@@ -89,7 +89,7 @@ else # no SSE and native target
 	./configure --enable-intel-sse=no
 
 	make
-	sudo make install
+	make install
 fi
 
 # Confirm completion
