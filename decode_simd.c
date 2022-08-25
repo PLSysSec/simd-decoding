@@ -2,7 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <png.h>
-#include <simd128.h>
+#if defined __has_include
+#  if __has_include (<simd128.h>)
+#    include <simd128.h>
+#  endif
+#endif
 #include <time.h>
 
 // Add line #include <simd128.h> to libpng/intel/filter_sse2_intrinsics.c

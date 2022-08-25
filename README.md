@@ -8,7 +8,7 @@ The `build.sh` script provides a method for building the `libpng` library with a
 export PATH=${WASI_SDK_PATH}/bin:$PATH
 export PATH=${WASI_SDK_PATH}/bin/ranlib:$PATH
 cd ${ZLIB_PATH}
-CC=${WASI_SDK_PATH}/bin/clang ./configure --prefix=${WASI_SDK_PATH}/share/sysroot
+CC=${WASI_SDK_PATH}/bin/clang ./configure --prefix=${WASI_SDK_PATH}/share/wasi-sysroot
 make && make install
 ```
 
