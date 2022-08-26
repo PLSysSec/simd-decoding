@@ -12,7 +12,19 @@ CC=${WASI_SDK_PATH}/bin/clang ./configure --prefix=${WASI_SDK_PATH}/share/wasi-s
 make && make install
 ```
 
-The `wasm_decode.sh` script compiles a `decode.c` file to WebAssembly to be executed with WAMR's iwasm VM Core (This script should only be used when working with the WASM target). The 'full_test.sh' script performs a test of execution speed for the built libpng library.
+### WAMR and wasm2c ###
+
+The `wamr_decode.sh` script compiles a `decode.c` file to WebAssembly. Then, using WAMR's AOT compiler, an `.aot` module is generated to be executed with WAMR's iwasm VM Core (This script should only be used when working with the WASM target). The 'full_test.sh' script performs a test of execution speed for the built libpng library. 
+
+```
+decode.c -> decode.wasm -> decode.aot
+```
+
+The `wasm2c_decode.sh` script compiles a `decode.c` file to WebAssembly and then utilizes the `wasm2c` compiler provided by the [wasm2c_sandbox_compiler](https://github.com/wrv/wasm2c_sandbox_compiler/tree/simdeverywhere). This generates C code which can be compiled to native code with `gcc`. 
+
+```
+decode.c -> decode.wasm -> decode.c -> native code
+```
 
 ## Benchmark Environment Setup ##
 
@@ -57,7 +69,7 @@ taskset -c 1 bash full_test.sh
 
 ```shell
 bash build.sh -s -w
-bash wasm_decode.sh -s
+bash wamr_decode.sh -s
 taskset -c 1 bash full_test.sh -s -w
 ```
 
@@ -65,7 +77,7 @@ taskset -c 1 bash full_test.sh -s -w
 
 ```shell
 bash build.sh -w
-bash wasm_decode.sh 
+bash wamr_decode.sh 
 taskset -c 1 bash full_test.sh -w
 ```
 

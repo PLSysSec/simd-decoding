@@ -3,6 +3,8 @@ set -e
 
 help() {
 	echo "Configure decode.c and WAMR compiler with libpng WASM target."
+	echo "Use the WAMR compiler to compile decode.wasm to decode.aot for"
+	echo "usage with the WAMR iwasm VM core."
 	echo 
 	echo "Syntax: bash wasm_decode.sh [-h|s]"
 	echo "options:"
