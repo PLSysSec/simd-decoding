@@ -33,7 +33,7 @@ if [[ "$simd" = true ]]; then
 	${WASI_SDK_PATH}/bin/clang \
 	--sysroot ${WASI_SDK_PATH}/share/wasi-sysroot \
 	-I${WASI_SDK_PATH}/share/wasi-sysroot/include/libpng16 \
-	-I${SIMDE_PATH}/wasm \
+	-I${SIMDE_PATH}/simde/wasm \
 	-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
 	-o out/decode_simd.wasm \
 	decode.c \

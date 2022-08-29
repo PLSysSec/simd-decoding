@@ -7,6 +7,8 @@
         "pngpriv.h": "c",
         "mmintrin.h": "c",
         "time.h": "c",
-        "timer_t.h": "c"
-    }
+        "timer_t.h": "c",
+        "math.h": "c"
+    },
+    "cmake.configureOnOpen": false
 }

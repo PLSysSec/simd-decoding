@@ -15,22 +15,17 @@
 #define BILLION 1000000000.0
 #define __USE_POSIX199309
 
-int main(int argc, char *argv[]) {
+double timed_decode(char *png_fn, char *out_fn) {
 	struct timespec start, end;
 	double dt;
 
-	if (argc < 2) {
-		printf("Not enough arguments provided.\n");
-		exit(1);
-	}
-
-	FILE *fp = fopen(argv[1], "rb");
+	FILE *fp = fopen(png_fn, "rb"); 
 	if (!fp) {
 		printf("Invalid file provided.\n");
 		exit(1);
 	}
 
-	FILE *out = fopen(argv[2], "a");
+	FILE *out = fopen(out_fn, "a");
 	if (!out) {
 		printf("Invalid file provided.\n");
 		exit(1);
@@ -70,8 +65,23 @@ int main(int argc, char *argv[]) {
 	fprintf(out, "%f\n", dt);
     
 	fclose(fp);
+	fclose(out);
 	for(int y = 0; y < height; y++) {
 		free(row_pointers[y]);
 	}
 	free(row_pointers);
+
+	return dt;
+}
+
+/**
+ * argv[1]: png image filename to decode
+ * argv[2]: output csv file for timing information
+ */
+int main(int argc, char *argv[]) {
+	if (argc < 2) {
+		printf("Not enough arguments provided.\n");
+		exit(1);
+	}
+	timed_decode(argv[1], argv[2]);
 }

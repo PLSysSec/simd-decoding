@@ -43,7 +43,7 @@ if [[ "$simd" = true && "$wasm" = true ]]; then # SIMD instructions and WASM tar
 	 -D_WASI_EMULATED_SIGNAL \
 	 -O3" \
 	LIBS=-lwasi-emulated-signal \
-	CPPFLAGS="-I${SIMDE_PATH}/wasm"
+	CPPFLAGS="-I${SIMDE_PATH}/simde/wasm"
 	LDFLAGS="-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
 	 -Wl,--no-entry \
 	 -Wl,--export-all \
@@ -60,7 +60,7 @@ if [[ "$simd" = true && "$wasm" = true ]]; then # SIMD instructions and WASM tar
 	make
 	make install 
 elif [[ "$simd" = true ]]; then # SSE and native target
-	CPPFLAGS="-I${SIMDE_PATH}/wasm" \
+	CPPFLAGS="-I${SIMDE_PATH}/simde/wasm" \
 	./configure --enable-intel-sse=yes 
 
 	make

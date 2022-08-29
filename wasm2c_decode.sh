@@ -26,7 +26,8 @@ SCRIPT_PATH=$(dirname "$SCRIPT")
 
 # Assume SIMD disabled for now; TODO add simd functionality
 
-# Compile decode.c to wasm 
+echo "compiling decode.c to WASM..."
+
 LDFLAGS="-Wl,--export-all -Wl,--growable-table" \
 ${WASI_SDK_PATH}/bin/clang \
 --sysroot ${WASI_SDK_PATH}/share/wasi-sysroot \
@@ -36,4 +37,30 @@ ${WASI_SDK_PATH}/bin/clang \
 decode.c \
 -lpng16 -lz 
 
-# Compile decode.wasm to c
+echo "compiling decode.wasm to C..."
+
+${WASM2C_PATH}/build/wasm2c \
+-o out/decode_mod.c \
+out/decode.wasm
+
+echo "compiling modified decode.c to native..."
+
+gcc \
+-o out/main \
+-I${WASM2C_PATH}/wasm2c \
+-I${SIMDE_PATH} \
+-Iout \
+main.c \
+out/decode_mod.c \
+${WASM2C_PATH}/wasm2c/wasm-rt-impl.c \
+${WASM2C_PATH}/wasm2c/wasm-rt-os-unix.c \
+${WASM2C_PATH}/wasm2c/wasm-rt-os-win.c \
+${WASM2C_PATH}/wasm2c/wasm-rt-wasi.c \
+-lm
+
+echo "TEST: running native code"
+
+# Non-functional due to problems with wasm2c system calls
+out/main images/large.png results/TEST.txt
+
+echo "done"

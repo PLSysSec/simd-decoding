@@ -20,7 +20,7 @@ The `wamr_decode.sh` script compiles a `decode.c` file to WebAssembly. Then, usi
 decode.c -> decode.wasm -> decode.aot
 ```
 
-The `wasm2c_decode.sh` script compiles a `decode.c` file to WebAssembly and then utilizes the `wasm2c` compiler provided by the [wasm2c_sandbox_compiler](https://github.com/wrv/wasm2c_sandbox_compiler/tree/simdeverywhere). This generates C code which can be compiled to native code with `gcc`. 
+The `wasm2c_decode.sh` script compiles a `decode.c` file to WebAssembly and then utilizes the `wasm2c` compiler provided by the [wasm2c_sandbox_compiler](https://github.com/wrv/wasm2c_sandbox_compiler/tree/simdeverywhere). This generates C code which can be compiled to native code with `gcc` and the `main.c` file. *This step is currently non-functional.* 
 
 ```
 decode.c -> decode.wasm -> decode.c -> native code

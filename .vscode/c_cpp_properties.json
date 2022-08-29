@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/opt/wasm2c_sandbox_compiler/wasm2c",
+                "/opt/simde"
+            ],
+            "defines": [],
+            "compilerPath": "/opt/wasi-sdk/wasi-sdk-14.0/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++14",
+            "intelliSenseMode": "linux-clang-x64"
+        }
+    ],
+    "version": 4
+}

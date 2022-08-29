@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+# Currently this file is nonoperational - decode.c is temporarily changed to use wasm2c
+
 help() {
 	echo "Run benchmark test after building libpng library"
     echo "Note: For WASM Target, wasm_decode.sh should be run before"
@@ -48,7 +50,7 @@ if [[ "$simd" = true && "$wasm" = true ]]; then # SIMD instructions and WASM tar
 elif [[ "$simd" = true ]]; then # SSE and native target
 	cp /dev/null results/native_with_sse.csv
 
-	gcc -I/usr/local/include/libpng16 -I${SIMDE_PATH}/wasm \
+	gcc -I/usr/local/include/libpng16 -I${SIMDE_PATH}/simde/wasm \
 	-L/usr/local/lib -o out/decode decode.c -lpng16
 
 	for i in $(seq 1 $N)
