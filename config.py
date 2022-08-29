@@ -38,7 +38,7 @@ def init():
     ],
     'Comparison of Decoding Speeds',
     'results/comparison.png',
-    'results/bar_char.png',
+    'results/bar_chart.png',
     [
       'Native without\nSSE2',
       'Native with\nSSE2',
