@@ -20,6 +20,10 @@ edit_libpngconf() {
 	sed -i 's/#define PNG_SIMPLIFIED_WRITE_SUPPORTED/#undef PNG_SIMPLIFIED_WRITE_SUPPORTED/g' pnglibconf.h
 }
 
+makefile_add_simd() {
+	sed -i 's/-O2/-O3 -msimd128/g' Makefile
+}
+
 # Enable and disable SIMD during build
 # Prepare for WASM usage in compilation
 while getopts "hsw" OPTION
@@ -41,7 +45,8 @@ cd ./libpng && make clean > /dev/null
 if [[ "$simd" = true && "$wasm" = true ]]; then # SIMD instructions and WASM target
 	CFLAGS="-DPNG_NO_SETJMP \
 	 -D_WASI_EMULATED_SIGNAL \
-	 -O3" \
+	 -O3 \
+	 -msimd128" \
 	LIBS=-lwasi-emulated-signal \
 	CPPFLAGS="-I${SIMDE_PATH}/simde/wasm"
 	LDFLAGS="-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
@@ -57,6 +62,7 @@ if [[ "$simd" = true && "$wasm" = true ]]; then # SIMD instructions and WASM tar
 	--prefix=${WASI_SDK_PATH}/share/wasi-sysroot
 
 	edit_libpngconf
+	makefile_add_simd
 	make
 	make install 
 elif [[ "$simd" = true ]]; then # SSE and native target

@@ -28,7 +28,7 @@ SCRIPT_PATH=$(dirname "$SCRIPT")
   
 echo "compiling decode.c to WASM..."
 if [[ "$simd" = true ]]; then 
-	CFLAGS="-O3 -fopenmp-simd" \
+	CFLAGS="-O3 -msimd128" \
 	LDFLAGS="-Wl,--export-all -Wl,--growable-table" \
 	${WASI_SDK_PATH}/bin/clang \
 	--sysroot ${WASI_SDK_PATH}/share/wasi-sysroot \
