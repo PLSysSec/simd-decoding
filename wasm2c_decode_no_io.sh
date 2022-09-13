@@ -43,15 +43,15 @@ fi
 
 mkdir -p out
 
-echo "compiling decode.c to WASM..."
+echo "compiling decode_no_io.c to WASM..."
 
-LDFLAGS="-Wl,--export-all -Wl,--growable-table" \
+LDFLAGS="-Wl,--export-all -Wl,--no-entry -Wl,--growable-table -Wl,--stack-first -Wl,-z,stack-size=1048576" \
 ${WASI_SDK_PATH}/bin/clang \
 --sysroot ${WASI_SDK_PATH}/share/wasi-sysroot \
 -I${WASI_SDK_PATH}/share/wasi-sysroot/include/libpng16 \
 -L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
 -o out/decode.wasm \
-decode.c \
+decode_no_io.c \
 -lpng16 -lz 
 
 echo "compiling decode.wasm to C..."
@@ -60,14 +60,14 @@ ${WASM2C_PATH}/build/wasm2c \
 -o out/decode_mod.c \
 out/decode.wasm
 
-echo "compiling modified decode.c to native..."
+echo "compiling modified decode_no_io.c to native..."
 
 gcc \
 -o out/main \
 -I${WASM2C_PATH}/wasm2c \
 -I${SIMDE_PATH} \
 -Iout \
-main.c \
+main_no_io.c \
 out/decode_mod.c \
 ${WASM2C_PATH}/wasm2c/wasm-rt-impl.c \
 ${WASM2C_PATH}/wasm2c/wasm-rt-os-unix.c \

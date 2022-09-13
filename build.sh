@@ -24,6 +24,19 @@ makefile_add_simd() {
 	sed -i 's/-O2/-O3 -msimd128/g' Makefile
 }
 
+# Check environment variables are set
+if [ -z "$WASI_SDK_PATH" ]; then 
+	echo "Set WASI_SDK_PATH before running and run the following:"
+	echo "  export PATH=\${WASI_SDK_PATH}/bin:\$PATH"
+	echo "  export PATH=\${WASI_SDK_PATH}/bin/ranlib:\$PATH"
+	exit 1
+fi 
+
+if [ -z "$SIMDE_PATH" ]; then 
+	echo "Set SIMDE_PATH before running"
+	exit 1
+fi 
+
 # Enable and disable SIMD during build
 # Prepare for WASM usage in compilation
 while getopts "hsw" OPTION
@@ -41,6 +54,10 @@ done
 # Build the libpng library
 echo "running make clean..."
 cd ./libpng && make clean > /dev/null
+
+# TODO: for some reason getopts doesn't work on my machine so I set the flags here
+simd=true
+wasm=true
 
 if [[ "$simd" = true && "$wasm" = true ]]; then # SIMD instructions and WASM target
 	CFLAGS="-DPNG_NO_SETJMP \
