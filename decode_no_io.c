@@ -16,7 +16,7 @@
 #define __USE_POSIX199309
 
 struct png_file {
-	char *buf;
+	unsigned char *buf;
 	unsigned int size;
 	unsigned int cur;
 };
@@ -33,13 +33,14 @@ void read_data_from_buffer(png_structp png, png_bytep out, png_size_t len) {
 
 	png_file *f = (png_file*) io_ptr;
 	memcpy(out, f->buf+f->cur, len);
+	//out = f->buf+f->cur;
 
 	// update the current pointer by the length we just read
 	f->cur += len;
 }
 
 
-double timed_decode(char* png_fl, unsigned int size) {
+double timed_decode(unsigned char* png_fl, unsigned int size) {
 	struct timespec start, end;
 	double dt = 1.0;
 
@@ -48,7 +49,7 @@ double timed_decode(char* png_fl, unsigned int size) {
 		.size = size,
 		.cur = 0,
 	};
-	fprintf(stderr, "Reading file of size %u\n", size);
+	//fprintf(stderr, "Reading file of size %u\n", size);
 	png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	png_infop info = png_create_info_struct(png);
 
@@ -57,9 +58,9 @@ double timed_decode(char* png_fl, unsigned int size) {
 	png_read_info(png, info);
 	
 	int width = png_get_image_width(png, info);
-	fprintf(stderr, "PNG Width %d \n", width);
+	//fprintf(stderr, "PNG Width %d \n", width);
 	int height = png_get_image_height(png, info);
-	fprintf(stderr, "PNG Height %d \n", height);
+	//fprintf(stderr, "PNG Height %d \n", height);
 	png_byte color_type = png_get_color_type(png, info);
 	png_byte bit_depth = png_get_bit_depth(png, info);
 	if (bit_depth == 16) png_set_strip_16(png);
@@ -112,7 +113,7 @@ int main(int argc, char *argv[]) {
     long filelen = ftell(fp);
     rewind(fp);
 
-    char *buffer = (char *)malloc(filelen * sizeof(char)); // Enough memory for the file
+    unsigned char *buffer = (unsigned char *)malloc(filelen * sizeof(unsigned char)); // Enough memory for the file
     fread(buffer, filelen, 1, fp); // Read in the entire file
     fclose(fp);
 

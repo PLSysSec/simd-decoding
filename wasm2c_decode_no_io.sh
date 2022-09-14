@@ -75,9 +75,8 @@ ${WASM2C_PATH}/wasm2c/wasm-rt-os-win.c \
 ${WASM2C_PATH}/wasm2c/wasm-rt-wasi.c \
 -lm
 
-echo "TEST: running native code"
 
-# Non-functional due to problems with wasm2c system calls
 out/main images/large.png results/TEST.txt
+
 
 echo "done"

@@ -10,6 +10,7 @@ def main(filename):
   exports = config.file_struct[filename]
   
   with open(exports[0], 'w') as f:
+    f.write("n: " + str(len(data)) + "\n")
     f.write("mean: " + str(np.mean(data)) + "\n")
     f.write("standard deviation: " + str(np.std(data)) + "\n")
     f.write("variance: " + str(np.var(data)) + "\n")
@@ -20,7 +21,7 @@ def main(filename):
   plt.xlabel("Time [s]")
   plt.ylabel("Frequency")
   plt.title(exports[1])
-  plt.xlim([config.MIN, config.MAX])
+  #plt.xlim([config.MIN, config.MAX])
 
   plt.savefig(exports[2])
 
