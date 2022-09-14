@@ -55,11 +55,9 @@ done
 echo "running make clean..."
 cd ./libpng && make clean > /dev/null
 
-# TODO: for some reason getopts doesn't work on my machine so I set the flags here
-simd=true
-wasm=true
 
 if [[ "$simd" = true && "$wasm" = true ]]; then # SIMD instructions and WASM target
+	echo "Building WASMSIMD version of libpng"
 	CFLAGS="-DPNG_NO_SETJMP \
 	 -D_WASI_EMULATED_SIGNAL \
 	 -O3 \
@@ -83,12 +81,14 @@ if [[ "$simd" = true && "$wasm" = true ]]; then # SIMD instructions and WASM tar
 	make
 	make install 
 elif [[ "$simd" = true ]]; then # SSE and native target
+	echo "Building Native SIMD version of libpng"
 	CPPFLAGS="-I${SIMDE_PATH}/simde/wasm" \
 	./configure --enable-intel-sse=yes 
 
 	make
 	sudo make install
 elif [[ "$wasm" = true ]]; then # no SIMD and WASM target
+	echo "Building WASM version of libpng"
 	CFLAGS="-DPNG_NO_SETJMP \
 	 -D_WASI_EMULATED_SIGNAL" \
 	LIBS=-lwasi-emulated-signal \
@@ -108,6 +108,7 @@ elif [[ "$wasm" = true ]]; then # no SIMD and WASM target
 	make
 	make install 
 else # no SSE and native target
+	echo "Building Native version of libpng"
 	CPPFLAGS="-I${SIMDE_PATH}/wasm" \
 	./configure --enable-intel-sse=no
 
