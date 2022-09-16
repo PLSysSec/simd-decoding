@@ -8,7 +8,7 @@ help() {
     echo "Note: For WASM Target, wasm_decode.sh should be run before"
     echo "this to build the proper AOT compiler."
 	echo 
-	echo "Syntax: bash native_test.sh [-h|s|w]"
+	echo "Syntax: bash native_test.sh [-h|s|w|c]"
 	echo "options:"
 	echo "h    Print this help menu."
 	echo "s    SIMD instructions included."

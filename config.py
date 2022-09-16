@@ -6,6 +6,15 @@ def init():
   MIN = 0.0
   MAX = 0.4
 
+  # values for histogram visualization - alpha is opacity and delta is width
+  global alpha, delta
+  alpha = 0.5
+  delta = 0.01
+
+  # figure dimensions for bar chart
+  global fig_size
+  fig_size = (6, 6)
+
   # filenames
   global native_sse_fn, native_no_sse_fn, wasm_simd_fn, wasm_no_simd_fn
   native_sse_fn = 'results/native_with_sse.csv'
