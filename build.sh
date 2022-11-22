@@ -51,70 +51,76 @@ do
 	esac
 done
 
+curdir=$(pwd)
+
 # Build the libpng library
 echo "running make clean..."
 cd ./libpng && make clean > /dev/null
 
 
-if [[ "$simd" = true && "$wasm" = true ]]; then # SIMD instructions and WASM target
-	echo "Building WASMSIMD version of libpng"
-	CFLAGS="-DPNG_NO_SETJMP \
-	 -D_WASI_EMULATED_SIGNAL \
-	 -O3 \
-	 -msimd128" \
-	LIBS=-lwasi-emulated-signal \
-	CPPFLAGS="-I${SIMDE_PATH}/simde/wasm"
-	LDFLAGS="-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
-	 -Wl,--no-entry \
-	 -Wl,--export-all \
-	 -Wl,--growable-table $*" \
-	LD=${WASI_SDK_PATH}/bin/wasm-ld \
-	CC=${WASI_SDK_PATH}/bin/clang \
-	./configure \
-	--with-sysroot=${WASI_SDK_PATH}/share/wasi-sysroot \
-	--enable-intel-sse=yes \
-	--host=wasm32 \
-	--prefix=${WASI_SDK_PATH}/share/wasi-sysroot
+make clean > /dev/null
+echo "Building Native version of libpng"
+./configure --enable-intel-sse=no \
+--prefix=${curdir}/libpng_native
 
-	edit_libpngconf
-	makefile_add_simd
-	make
-	make install 
-elif [[ "$simd" = true ]]; then # SSE and native target
-	echo "Building Native SIMD version of libpng"
-	CPPFLAGS="-I${SIMDE_PATH}/simde/wasm" \
-	./configure --enable-intel-sse=yes 
+make
+make install
 
-	make
-	sudo make install
-elif [[ "$wasm" = true ]]; then # no SIMD and WASM target
-	echo "Building WASM version of libpng"
-	CFLAGS="-DPNG_NO_SETJMP \
-	 -D_WASI_EMULATED_SIGNAL" \
-	LIBS=-lwasi-emulated-signal \
-	LDFLAGS="-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
-	 -Wl,--no-entry \
-	 -Wl,--export-all \
-	 -Wl,--growable-table $*" \
-	LD=${WASI_SDK_PATH}/bin/wasm-ld \
-	CC=${WASI_SDK_PATH}/bin/clang \
-	./configure \
-	--with-sysroot=${WASI_SDK_PATH}/share/wasi-sysroot \
-	--enable-intel-sse=no \
-	--host=wasm32 \
-	--prefix=${WASI_SDK_PATH}/share/wasi-sysroot
+make clean > /dev/null
+echo "Building Native SIMD version of libpng"
+./configure --enable-intel-sse=yes \
+CPPFLAGS="-I${SIMDE_PATH}/simde/wasm" \
+--prefix=${curdir}/libpng_nativesimd
 
-	edit_libpngconf
-	make
-	make install 
-else # no SSE and native target
-	echo "Building Native version of libpng"
-	CPPFLAGS="-I${SIMDE_PATH}/wasm" \
-	./configure --enable-intel-sse=no
+make
+make install
 
-	make
-	sudo make install
-fi
+make clean > /dev/null
+echo "Building WASM version of libpng"
+CFLAGS="-DPNG_NO_SETJMP \
+	-D_WASI_EMULATED_SIGNAL" \
+LIBS=-lwasi-emulated-signal \
+CPPFLAGS="-I${SIMDE_PATH}/simde/wasm" \
+LDFLAGS="-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
+	-Wl,--no-entry \
+	-Wl,--export-all \
+	-Wl,--growable-table $*" \
+LD=${WASI_SDK_PATH}/bin/wasm-ld \
+CC=${WASI_SDK_PATH}/bin/clang \
+./configure \
+--with-sysroot=${WASI_SDK_PATH}/share/wasi-sysroot \
+--enable-intel-sse=no \
+--host=wasm32 \
+--prefix=${curdir}/libpng_wasm
+
+edit_libpngconf
+make
+make install 
+
+make clean > /dev/null
+echo "Building WASMSIMD version of libpng"
+CFLAGS="-DPNG_NO_SETJMP \
+	-D_WASI_EMULATED_SIGNAL \
+	-O3 \
+	-msimd128" \
+LIBS=-lwasi-emulated-signal \
+CPPFLAGS="-I${SIMDE_PATH}/simde/wasm" \
+LDFLAGS="-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
+	-Wl,--no-entry \
+	-Wl,--export-all \
+	-Wl,--growable-table $*" \
+LD=${WASI_SDK_PATH}/bin/wasm-ld \
+CC=${WASI_SDK_PATH}/bin/clang \
+./configure \
+--with-sysroot=${WASI_SDK_PATH}/share/wasi-sysroot \
+--enable-intel-sse=yes \
+--host=wasm32 \
+--prefix=${curdir}/libpng_wasmsimd
+
+edit_libpngconf
+makefile_add_simd
+make
+make install 
 
 # Confirm completion
 echo "done"

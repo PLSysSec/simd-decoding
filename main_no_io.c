@@ -1,14 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <decode_mod.h>
+
+#ifdef ENABLE_SIMD
+#include <decode_wasmsimd.h>
+#else
+#include <decode_wasm.h>
+#endif
 
 /**
  * argv[1]: png image filename to decode
  * argv[2]: output csv file for timing information
  */
 int main(int argc, char *argv[]) {
-    if (argc < 2) {
-		printf("Usage: %s [PNG image path] [output CSV path]\n", argv[0]);
+    if (argc < 3) {
+		printf("Usage: %s <PNG image path> <output_text>\n", argv[0]);
 		exit(1);
 	}
 
@@ -22,7 +27,7 @@ int main(int argc, char *argv[]) {
 
     FILE *fp = fopen(argv[1], "rb"); 
 	if (!fp) {
-		printf("Invalid file provided.\n");
+		printf("Invalid input image provided.\n");
 		exit(1);
 	}
     fseek(fp, 0, SEEK_END); 
@@ -35,7 +40,7 @@ int main(int argc, char *argv[]) {
 
 	FILE *out = fopen(argv[2], "a");
 	if (!out) {
-		printf("Invalid file provided.\n");
+		printf("Invalid output file provided.\n");
 		exit(1);
 	}
 

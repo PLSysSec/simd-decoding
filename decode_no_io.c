@@ -4,16 +4,9 @@
 #include <png.h>
 #include <time.h>
 
-#if defined __has_include
-#  if __has_include ("simd128.h")
-#    include "simd128.h"
-#  endif
-#endif
-
 // Add line #include <simd128.h> to libpng/intel/filter_sse2_intrinsics.c
 
 #define BILLION 1000000000.0
-#define __USE_POSIX199309
 
 struct png_file {
 	unsigned char *buf;
@@ -99,14 +92,15 @@ double timed_decode(unsigned char* png_fl, unsigned int size) {
  * argv[2]: output csv file for timing information
  */
 int main(int argc, char *argv[]) {
-	if (argc < 2) {
+	if (argc < 3) {
 		printf("Not enough arguments provided.\n");
+		printf("Usage: ./%s <image> <output_time> \n", argv[0]);
 		exit(1);
 	}
 
 	FILE *fp = fopen(argv[1], "rb"); 
 	if (!fp) {
-		printf("Invalid file provided.\n");
+		printf("Invalid input image provided.\n");
 		exit(1);
 	}
     fseek(fp, 0, SEEK_END); 
@@ -120,7 +114,7 @@ int main(int argc, char *argv[]) {
 	
 	FILE *out = fopen(argv[2], "a");
 	if (!out) {
-		printf("Invalid file provided.\n");
+		printf("Invalid output file provided.\n");
 		exit(1);
 	}
 
@@ -128,6 +122,6 @@ int main(int argc, char *argv[]) {
 
 	fprintf(out, "%f\n", dt);
     fclose(out);
-
+	printf("time: %f\n", dt);
 	return 0;
 }
