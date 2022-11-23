@@ -39,8 +39,8 @@ def init():
       'Native with SSE2',
     #  'WASM without SIMD128',
     #  'WASM with SIMD128',
-      'WASM2C with SIMD128',
-      'WASM2C without SIMD128'
+      'WASM2C without SIMD128',
+      'WASM2C with SIMD128'
     ],
     'Comparison of Decoding Speeds',
     'results/comparison.png',
@@ -50,7 +50,7 @@ def init():
       'Native with\nSSE2',
     #  'WASM without\nSIMD128',
     #  'WASM with\nSIMD128',
-      'WASM2C with\nSIMD128',
-      'WASM2C without\nSIMD128'
+      'WASM2C without\nSIMD128',
+      'WASM2C with\nSIMD128'
     ]
   )
