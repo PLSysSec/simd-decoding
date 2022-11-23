@@ -88,3 +88,15 @@ Individual statistical analysis is run for each case in the `full_test.sh` scrip
 ```shell
 python3 comp_analysis.py
 ```
+
+
+## E2E WASM2C Test
+
+Run
+```shell
+./build.sh
+./wasm2c_decode_no_io.sh
+./wasm2c_no_io_test.sh
+```
+
+Build will install the libraries to local directories. 

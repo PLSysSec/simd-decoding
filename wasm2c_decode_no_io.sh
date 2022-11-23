@@ -24,13 +24,13 @@ mkdir -p out
 
 echo "[X] Building NATIVE with NO SIMD"
 #echo " -- compiling decode_no_io.c to native..."
-gcc -Ilibpng_native/include/ -Llibpng_native/lib -o out/decode_native decode_no_io.c -lpng16
+gcc -static -Ilibpng_native/include/ -Llibpng_native/lib -o out/decode_native decode_no_io.c -lpng16 -lz -lm
 
 #echo " -- running native"
 #out/decode_native images/large.png results/TEST.txt 
 
 echo "[X] Building NATIVE with SIMD"
-gcc -Ilibpng_nativesimd/include/ -I${SIMDE_PATH}/simde/wasm -Llibpng_nativesimd/lib -o out/decode_nativesimd decode_no_io.c -lpng16 -mavx
+gcc -static -Ilibpng_nativesimd/include/ -I${SIMDE_PATH}/simde/wasm -Llibpng_nativesimd/lib -o out/decode_nativesimd decode_no_io.c -lpng16 -mavx  -lz -lm
 
 #echo " -- running native simd"
 #out/decode_nativesimd images/large.png results/TEST.txt 
