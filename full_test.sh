@@ -7,7 +7,7 @@ help() {
 	echo "Run benchmark test after building libpng library"
     echo "Note: For WASM Target, wasm_decode.sh should be run before"
     echo "this to build the proper AOT compiler."
-	echo 
+	echo
 	echo "Syntax: bash native_test.sh [-h|s|w]"
 	echo "options:"
 	echo "h    Print this help menu."
@@ -42,7 +42,7 @@ if [[ "$simd" = true && "$wasm" = true ]]; then # SIMD instructions and WASM tar
 		${WAMR_PATH}/product-mini/platforms/linux/build/iwasm \
 		--dir=${SCRIPT_PATH} out/decode_simd.aot \
 		${SCRIPT_PATH}/images/${IMAGE} \
-		${SCRIPT_PATH}/results/wasm_with_simd.csv 
+		${SCRIPT_PATH}/results/wasm_with_simd.csv
 	done
 
 	python3 stat_analysis.py results/wasm_with_simd.csv

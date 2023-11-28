@@ -3,7 +3,7 @@ set -e
 
 help() {
 	echo "Build libpng to the appropriate target."
-	echo 
+	echo
 	echo "Syntax: bash build.sh [-h|s|w]"
 	echo "options:"
 	echo "h    Print this help menu."
@@ -25,17 +25,17 @@ makefile_add_simd() {
 }
 
 # Check environment variables are set
-if [ -z "$WASI_SDK_PATH" ]; then 
+if [ -z "$WASI_SDK_PATH" ]; then
 	echo "Set WASI_SDK_PATH before running and run the following:"
 	echo "  export PATH=\${WASI_SDK_PATH}/bin:\$PATH"
 	echo "  export PATH=\${WASI_SDK_PATH}/bin/ranlib:\$PATH"
 	exit 1
-fi 
+fi
 
-if [ -z "$SIMDE_PATH" ]; then 
+if [ -z "$SIMDE_PATH" ]; then
 	echo "Set SIMDE_PATH before running"
 	exit 1
-fi 
+fi
 
 # Enable and disable SIMD during build
 # Prepare for WASM usage in compilation
@@ -55,72 +55,14 @@ curdir=$(pwd)
 
 # Build the libpng library
 echo "running make clean..."
-cd ./libpng && make clean > /dev/null
 
+./build_native.sh
 
-make clean > /dev/null
-echo "Building Native version of libpng"
-./configure --enable-intel-sse=no \
---prefix=${curdir}/libpng_native
+./build_nativesimd.sh
 
-make
-make install
+./build_wasm.sh
 
-make clean > /dev/null
-echo "Building Native SIMD version of libpng"
-./configure --enable-intel-sse=yes \
-CPPFLAGS="-I${SIMDE_PATH}/simde/wasm" \
---prefix=${curdir}/libpng_nativesimd
-
-make
-make install
-
-make clean > /dev/null
-echo "Building WASM version of libpng"
-CFLAGS="-DPNG_NO_SETJMP \
-	-D_WASI_EMULATED_SIGNAL" \
-LIBS=-lwasi-emulated-signal \
-CPPFLAGS="-I${SIMDE_PATH}/simde/wasm" \
-LDFLAGS="-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
-	-Wl,--no-entry \
-	-Wl,--export-all \
-	-Wl,--growable-table $*" \
-LD=${WASI_SDK_PATH}/bin/wasm-ld \
-CC=${WASI_SDK_PATH}/bin/clang \
-./configure \
---with-sysroot=${WASI_SDK_PATH}/share/wasi-sysroot \
---enable-intel-sse=no \
---host=wasm32 \
---prefix=${curdir}/libpng_wasm
-
-edit_libpngconf
-make
-make install 
-
-make clean > /dev/null
-echo "Building WASMSIMD version of libpng"
-CFLAGS="-DPNG_NO_SETJMP \
-	-D_WASI_EMULATED_SIGNAL \
-	-O3 \
-	-msimd128" \
-LIBS=-lwasi-emulated-signal \
-CPPFLAGS="-I${SIMDE_PATH}/simde/wasm" \
-LDFLAGS="-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
-	-Wl,--no-entry \
-	-Wl,--export-all \
-	-Wl,--growable-table $*" \
-LD=${WASI_SDK_PATH}/bin/wasm-ld \
-CC=${WASI_SDK_PATH}/bin/clang \
-./configure \
---with-sysroot=${WASI_SDK_PATH}/share/wasi-sysroot \
---enable-intel-sse=yes \
---host=wasm32 \
---prefix=${curdir}/libpng_wasmsimd
-
-edit_libpngconf
-makefile_add_simd
-make
-make install 
+./build_wasmsimd.sh
 
 # Confirm completion
 echo "done"

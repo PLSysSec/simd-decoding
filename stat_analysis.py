@@ -8,7 +8,7 @@ def main(filename):
   config.init()
   data = np.genfromtxt(filename,delimiter=',')
   exports = config.file_struct[filename]
-  
+
   with open(exports[0], 'w') as f:
     f.write("n: " + str(len(data)) + "\n")
     f.write("mean: " + str(np.mean(data)) + "\n")

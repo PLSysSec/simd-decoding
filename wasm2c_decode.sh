@@ -3,7 +3,7 @@ set -e
 
 help() {
 	echo "Compile decode.c to wasm and re-compile back to c."
-	echo 
+	echo
 	echo "Syntax: bash wasm_decode.sh [-h|s]"
 	echo "options:"
 	echo "h    Print this help menu."
@@ -26,20 +26,20 @@ SCRIPT_PATH=$(dirname "$SCRIPT")
 
 # Assume SIMD disabled for now; TODO add simd functionality
 
-if [ -z "$WASI_SDK_PATH" ]; then 
+if [ -z "$WASI_SDK_PATH" ]; then
 	echo "Set WASI_SDK_PATH before running"
 	exit 1
-fi 
+fi
 
-if [ -z "$SIMDE_PATH" ]; then 
+if [ -z "$SIMDE_PATH" ]; then
 	echo "Set SIMDE_PATH before running"
 	exit 1
-fi 
+fi
 
-if [ -z "$WASM2C_PATH" ]; then 
+if [ -z "$WASM2C_PATH" ]; then
 	echo "Set WASM2C_PATH before running"
 	exit 1
-fi 
+fi
 
 mkdir -p out
 
@@ -52,7 +52,7 @@ ${WASI_SDK_PATH}/bin/clang \
 -L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
 -o out/decode.wasm \
 decode.c \
--lpng16 -lz 
+-lpng16 -lz
 
 echo "compiling decode.wasm to C..."
 

@@ -19,7 +19,7 @@ double timed_decode(char *png_fn, char *out_fn) {
 	struct timespec start, end;
 	double dt;
 
-	FILE *fp = fopen(png_fn, "rb"); 
+	FILE *fp = fopen(png_fn, "rb");
 	if (!fp) {
 		printf("Invalid file provided.\n");
 		exit(1);
@@ -63,7 +63,7 @@ double timed_decode(char *png_fn, char *out_fn) {
 	clock_gettime(CLOCK_REALTIME, &end);
 	dt = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / BILLION;
 	fprintf(out, "%f\n", dt);
-    
+
 	fclose(fp);
 	fclose(out);
 	for(int y = 0; y < height; y++) {

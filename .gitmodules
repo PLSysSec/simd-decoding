@@ -2,3 +2,7 @@
   path = libpng
   url = https://github.com/jakegoldm/libpng.git
   ignore = dirty
+[submodule "zlib"]
+	path = zlib
+	url = https://github.com/madler/zlib.git
+	branch = master

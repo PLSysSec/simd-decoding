@@ -5,7 +5,7 @@ help() {
 	echo "Configure decode.c and WAMR compiler with libpng WASM target."
 	echo "Use the WAMR compiler to compile decode.wasm to decode.aot for"
 	echo "usage with the WAMR iwasm VM core."
-	echo 
+	echo
 	echo "Syntax: bash wasm_decode.sh [-h|s]"
 	echo "options:"
 	echo "h    Print this help menu."
@@ -25,9 +25,9 @@ done
 
 SCRIPT=$(readlink -f "$0")
 SCRIPT_PATH=$(dirname "$SCRIPT")
-  
+
 echo "compiling decode.c to WASM..."
-if [[ "$simd" = true ]]; then 
+if [[ "$simd" = true ]]; then
 	CFLAGS="-O3 -msimd128" \
 	LDFLAGS="-Wl,--export-all -Wl,--growable-table" \
 	${WASI_SDK_PATH}/bin/clang \
@@ -37,8 +37,8 @@ if [[ "$simd" = true ]]; then
 	-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
 	-o out/decode_simd.wasm \
 	decode.c \
-	-lpng16 -lz 
-else 
+	-lpng16 -lz
+else
 	LDFLAGS="-Wl,--export-all -Wl,--growable-table" \
 	${WASI_SDK_PATH}/bin/clang \
 	--sysroot ${WASI_SDK_PATH}/share/wasi-sysroot \
@@ -46,40 +46,40 @@ else
 	-L${WASI_SDK_PATH}/share/wasi-sysroot/lib \
 	-o out/decode_no_simd.wasm \
 	decode.c \
-	-lpng16 -lz 
-fi 
+	-lpng16 -lz
+fi
 
 # Extraneous step - only for checking WASM code
 echo "converting .wasm to .wat..."
 if [[ "$simd" = true ]]; then
 	${WABT_PATH}/build/wasm2wat -o out/decode_simd.wat out/decode_simd.wasm
-else 
+else
 	${WABT_PATH}/build/wasm2wat -o out/decode_nosimd.wat out/decode_no_simd.wasm
 fi
 
 echo "rebuilding WAMR..."
-if [[ "$simd" = true ]]; then 
-	cd ${WAMR_PATH}/wamr-compiler/build 
+if [[ "$simd" = true ]]; then
+	cd ${WAMR_PATH}/wamr-compiler/build
 	cmake .. -DWAMR_BUILD_SIMD=1
-	make 
+	make
 	cd ${SCRIPT_PATH}
-else 
-	cd ${WAMR_PATH}/wamr-compiler/build 
+else
+	cd ${WAMR_PATH}/wamr-compiler/build
 	cmake .. -DWAMR_BUILD_SIMD=0
-	make 
+	make
 	cd ${SCRIPT_PATH}
 fi
 
 echo "compiling to AOT with wamrc..."
-if [[ "$simd" = true ]]; then 
+if [[ "$simd" = true ]]; then
 	${WAMR_PATH}/wamr-compiler/build/wamrc \
 	-o out/decode_simd.aot \
 	out/decode_simd.wasm
-else 
+else
 	${WAMR_PATH}/wamr-compiler/build/wamrc \
 	--disable-simd \
 	-o out/decode_nosimd.aot \
 	out/decode_no_simd.wasm
-fi 
+fi
 
 echo "done"

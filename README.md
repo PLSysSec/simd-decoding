@@ -1,26 +1,30 @@
 # simd-decoding
 
 ## Overview ##
-This repository contains files necessary for testing a simple image decoding operation using `libpng` with SIMD instructions when compiled to WebAssembly. Note that this build uses wasi-sdk version 14.0, WASM-Micro-Runtime (WAMR), and WebAssmebly Binary Toolkit (WABT). Additionally, note that `libz` must be installed for `libpng` to build. 
+This repository contains files necessary for testing a simple image decoding operation using `libpng` with SIMD instructions when compiled to WebAssembly. Note that this build uses wasi-sdk version 14.0, WASM-Micro-Runtime (WAMR), and WebAssmebly Binary Toolkit (WABT). Additionally, note that `libz` must be installed for `libpng` to build.
 The `build.sh` script provides a method for building the `libpng` library with and without SIMD instructions and with a native or WASM target. For the WebAssembly target, `zlib` must be built to WASM before building the `libpng` library. This is dones by using:<br />
 
 ```shell
-export PATH=${WASI_SDK_PATH}/bin:$PATH
-export PATH=${WASI_SDK_PATH}/bin/ranlib:$PATH
-cd ${ZLIB_PATH}
-CC=${WASI_SDK_PATH}/bin/clang ./configure --prefix=${WASI_SDK_PATH}/share/wasi-sysroot
+git submodule update --init
+cd zlib
+LD=${WASI_SDK_PATH}/bin/wasm-ld \
+CC=${WASI_SDK_PATH}/bin/clang \
+AR=${WASI_SDK_PATH}/bin/ar \
+STRIP=${WASI_SDK_PATH}/bin/strip \
+RANLIB=${WASI_SDK_PATH}/bin/ranlib \
+./configure --prefix=${WASI_SDK_PATH}/share/wasi-sysroot
 make && make install
 ```
 
 ### WAMR and wasm2c ###
 
-The `wamr_decode.sh` script compiles a `decode.c` file to WebAssembly. Then, using WAMR's AOT compiler, an `.aot` module is generated to be executed with WAMR's iwasm VM Core (This script should only be used when working with the WASM target). The 'full_test.sh' script performs a test of execution speed for the built libpng library. 
+The `wamr_decode.sh` script compiles a `decode.c` file to WebAssembly. Then, using WAMR's AOT compiler, an `.aot` module is generated to be executed with WAMR's iwasm VM Core (This script should only be used when working with the WASM target). The 'full_test.sh' script performs a test of execution speed for the built libpng library.
 
 ```
 decode.c -> decode.wasm -> decode.aot
 ```
 
-The `wasm2c_decode.sh` script compiles a `decode.c` file to WebAssembly and then utilizes the `wasm2c` compiler provided by the [wasm2c_sandbox_compiler](https://github.com/wrv/wasm2c_sandbox_compiler/tree/simdeverywhere). This generates C code which can be compiled to native code with `gcc` and the `main.c` file. *This step is currently non-functional.* 
+The `wasm2c_decode.sh` script compiles a `decode.c` file to WebAssembly and then utilizes the `wasm2c` compiler provided by the [wasm2c_sandbox_compiler](https://github.com/wrv/wasm2c_sandbox_compiler/tree/simdeverywhere). This generates C code which can be compiled to native code with `gcc` and the `main.c` file. *This step is currently non-functional.*
 
 ```
 decode.c -> decode.wasm -> decode.c -> native code
@@ -41,7 +45,7 @@ To set CPU isolation and shielding, we run
 sudo nano /etc/default/grub
 ```
 
-and add `isolcpus=1` to `GRUB_CMDLINE_LINUX_DEFAULT`. Then, to set CPU shielding, 
+and add `isolcpus=1` to `GRUB_CMDLINE_LINUX_DEFAULT`. Then, to set CPU shielding,
 
 ```shell
 sudo cset shield -c 1 -k on
@@ -77,7 +81,7 @@ taskset -c 1 bash full_test.sh -s -w
 
 ```shell
 bash build.sh -w
-bash wamr_decode.sh 
+bash wamr_decode.sh
 taskset -c 1 bash full_test.sh -w
 ```
 
