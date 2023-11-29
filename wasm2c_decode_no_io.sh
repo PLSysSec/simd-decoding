@@ -86,17 +86,10 @@ ${WASM2C_PATH}/bin/wasm2c -o out/decode_wasmsimd.c out/decode_wasmsimd.wasm
 
 #echo " -- compiling modified decode_no_io.c to native..."
 
-clang -O2 \
--o out/decode_wasmsimd \
--I${WASM2C_PATH}/include \
--I${SIMDE_PATH} \
--Iout \
-main_no_io_wasm.c \
-out/decode_wasmsimd.c \
-${WASM2C_PATH}/share/wabt/wasm2c/wasm-rt-impl.c \
+clang -O2 -o out/decode_wasmsimd -I${WASM2C_PATH}/include -I${SIMDE_PATH} -Iout \
+main_no_io_wasm.c out/decode_wasmsimd.c ${WASM2C_PATH}/share/wabt/wasm2c/wasm-rt-impl.c \
 uvwasi-rt.c ${UVWASI_PATH}/out/cmake/libuvwasi_a.a ${UVWASI_PATH}/out/cmake/_deps/libuv-build/libuv_a.a -I${UVWASI_PATH}/include/ \
--lm -mavx \
--DENABLE_SIMD
+-lm -mavx -DENABLE_SIMD
 
 #echo " -- running wasm"
 #out/decode_wasmsimd images/large.png results/TEST.txt

@@ -19,7 +19,7 @@ fi
 PATH=${WASI_SDK_PATH}/bin:$PATH
 PATH=${WASI_SDK_PATH}/bin/ranlib:$PATH
 
-IMAGE=images/image.png
+IMAGE=images/large.png
 N=20
 RESULTS_DIR=results
 
